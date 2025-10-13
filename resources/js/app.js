@@ -549,7 +549,7 @@ document.addEventListener('alpine:init', () => {
             //await this.getUserLocation();
 
             // Si hay zona en la URL, filtrar por esa zona
-            if(this.zonaSeleccionada) {
+            if (this.zonaSeleccionada) {
                 this.estacionesFiltradas = this.estacionesOrdenadas.filter(
                     estacion => estacion.zona === this.zonaSeleccionada
                 );
@@ -560,9 +560,9 @@ document.addEventListener('alpine:init', () => {
                 });
                 return; // No necesitamos la ubicación si ya tenemos zona seleccionada
             }
-            
+
             // Solo solicitamos ubicación si no lo hemos hecho antes
-            if(!this.hasRequestedLocation) {
+            if (!this.hasRequestedLocation) {
                 await this.getUserLocation();
                 this.hasRequestedLocation = true;
             }
@@ -606,8 +606,8 @@ document.addEventListener('alpine:init', () => {
                 if (navigator.geolocation) {
                     const position = await new Promise((resolve, reject) => {
                         navigator.geolocation.getCurrentPosition(
-                            resolve, 
-                            reject, 
+                            resolve,
+                            reject,
                             {
                                 enableHighAccuracy: true,
                                 timeout: 10000,
@@ -637,7 +637,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         getLocationErrorMessage(error) {
-            switch(error.code) {
+            switch (error.code) {
                 case error.PERMISSION_DENIED:
                     return "Permiso de ubicación denegado. Mostrando todas las estaciones.";
                 case error.POSITION_UNAVAILABLE:
@@ -732,15 +732,15 @@ document.addEventListener('alpine:init', () => {
             analytics: false,
             marketing: false
         },
-        
+
         init() {
             // Verificar si ya hay consentimiento guardado
             const consent = this.getCookie('cookie_consent');
-            
+
             // Mostrar banner si no hay consentimiento o si fue rechazado
             if (!consent || consent === 'rejected') {
                 this.showConsent = true;
-                
+
                 // Cargar preferencias guardadas si existen
                 const savedPrefs = localStorage.getItem('cookie_preferences');
                 if (savedPrefs) {
@@ -751,7 +751,7 @@ document.addEventListener('alpine:init', () => {
                 this.loadAllCookies();
             }
         },
-        
+
         acceptAll() {
             this.preferences = {
                 necessary: true,
@@ -763,7 +763,7 @@ document.addEventListener('alpine:init', () => {
             this.loadAllCookies();
             this.showConsent = false;
         },
-        
+
         acceptNecessary() {
             this.preferences = {
                 necessary: true,
@@ -774,7 +774,7 @@ document.addEventListener('alpine:init', () => {
             this.savePreferences();
             this.showConsent = false;
         },
-        
+
         rejectAll() {
             this.preferences = {
                 necessary: true, // Las necesarias no se pueden rechazar
@@ -784,53 +784,53 @@ document.addEventListener('alpine:init', () => {
             this.setCookie('cookie_consent', 'rejected', 365);
             this.savePreferences();
             this.showConsent = false;
-            
+
             // Opcional: Mostrar mensaje de confirmación
             alert('Has rechazado todas las cookies no esenciales. Algunas funcionalidades del sitio pueden no estar disponibles.');
         },
-        
+
         customize() {
             this.showCustomize = true;
         },
-        
+
         savePreferences() {
             // Determinar estado general del consentimiento
-            const consentStatus = (this.preferences.analytics || this.preferences.marketing) 
-                ? 'accepted' 
+            const consentStatus = (this.preferences.analytics || this.preferences.marketing)
+                ? 'accepted'
                 : 'necessary';
-            
+
             this.setCookie('cookie_consent', consentStatus, 365);
             localStorage.setItem('cookie_preferences', JSON.stringify(this.preferences));
-            
+
             // Cargar scripts según preferencias
             if (this.preferences.analytics) {
                 this.loadAnalyticsCookies();
             } else {
                 this.unloadAnalyticsCookies();
             }
-            
+
             if (this.preferences.marketing) {
                 this.loadMarketingCookies();
             } else {
                 this.unloadMarketingCookies();
             }
-            
+
             this.showCustomize = false;
             this.showConsent = false;
         },
-        
+
         loadAllCookies() {
             this.loadAnalyticsCookies();
             this.loadMarketingCookies();
         },
-        
+
         loadAnalyticsCookies() {
             // Google Analytics
             window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
+            function gtag() { dataLayer.push(arguments); }
             gtag('js', new Date());
             gtag('config', '{{ env("GOOGLE_ANALYTICS_ID") }}');
-            
+
             if (!document.querySelector('script[src*="googletagmanager.com"]')) {
                 const script = document.createElement('script');
                 script.src = `https://www.googletagmanager.com/gtag/js?id=${'{{ env("GOOGLE_ANALYTICS_ID") }}'}`;
@@ -838,41 +838,44 @@ document.addEventListener('alpine:init', () => {
                 document.head.appendChild(script);
             }
         },
-        
+
         unloadAnalyticsCookies() {
             // Eliminar Google Analytics
             window['ga-disable-{{ env("GOOGLE_ANALYTICS_ID") }}'] = true;
             document.cookie = '_ga=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
             document.cookie = '_gat=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
             document.cookie = '_gid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-            
+
             console.log('Google Analytics descargado');
         },
-        
+
         loadMarketingCookies() {
             // Facebook Pixel
             if (!window.fbq) {
-                !function(f,b,e,v,n,t,s)
-                {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-                n.queue=[];t=b.createElement(e);t.async=!0;
-                t.src=v;s=b.getElementsByTagName(e)[0];
-                s.parentNode.insertBefore(t,s)}(window, document,'script',
-                'https://connect.facebook.net/en_US/fbevents.js');
+                !function (f, b, e, v, n, t, s) {
+                    if (f.fbq) return; n = f.fbq = function () {
+                        n.callMethod ?
+                        n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                    };
+                    if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+                    n.queue = []; t = b.createElement(e); t.async = !0;
+                    t.src = v; s = b.getElementsByTagName(e)[0];
+                    s.parentNode.insertBefore(t, s)
+                }(window, document, 'script',
+                    'https://connect.facebook.net/en_US/fbevents.js');
             }
             fbq('init', '{{ env("FACEBOOK_PIXEL_ID") }}');
             fbq('track', 'PageView');
         },
-        
+
         unloadMarketingCookies() {
             // Deshabilitar Facebook Pixel
-            window['fbq'] = function() { console.log('Facebook Pixel bloqueado por preferencias del usuario'); };
+            window['fbq'] = function () { console.log('Facebook Pixel bloqueado por preferencias del usuario'); };
             document.cookie = '_fbp=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-            
+
             console.log('Facebook Pixel descargado');
         },
-        
+
         setCookie(name, value, days) {
             let expires = "";
             if (days) {
@@ -882,11 +885,11 @@ document.addEventListener('alpine:init', () => {
             }
             document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
         },
-        
+
         getCookie(name) {
             const nameEQ = name + "=";
             const ca = document.cookie.split(';');
-            for(let i=0; i < ca.length; i++) {
+            for (let i = 0; i < ca.length; i++) {
                 let c = ca[i];
                 while (c.charAt(0) === ' ') c = c.substring(1, c.length);
                 if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
