@@ -46,6 +46,9 @@
         <!-- Cookie Consent -->
 <x-cookie-consent />
 
+{{-- telegram chat bot --}}
+<x-telegram-button />
+
 <!-- Scripts -->
 @stack('scripts')
     </body>
